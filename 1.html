@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>線上商城</title>
+    <style>
+        /* CSS樣式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .product {
+            width: 30%;
+            border: 1px solid #ccc;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .product p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .product button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .product button:hover {
+            background-color: #555;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 10px;
+            margin-right: 5px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #555;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container input[type=text] {
+            padding: 10px;
+            width: 50%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 18px;
+            box-sizing: border-box;
+        }
+
+        .search-container button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: #555;
+        }
+
+        .cart {
+            position: relative;
+            margin-left: auto;
+        }
+
+        .cart-icon {
+            display: block;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .cart-item-count {
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            line-height: 20px;
+        }
+
+        .cart-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 100;
+        }
+
+        .cart-dropdown ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .cart-dropdown ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .cart-dropdown ul li:last-child {
+            border-bottom: none;
+        }
+
+        .cart-dropdown p {
+            padding: 10px;
+            margin: 0;
+            text-align: center;
+        }
+
+        .cart-dropdown button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .cart-dropdown button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 頁首 -->
+    <header>
+        <h1>網路商城</h1>
+        <!-- 搜尋欄位 -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="搜尋產品...">
+            <button onclick="search()">搜尋</button>
+        </div>
+        <!-- 購物車 -->
+        <div class="cart">
+            <img src="cart-icon.png" alt="Cart Icon" class="cart-icon" onclick="toggleCart()">
+            <span id="cartItemCount" class="cart-item-count">0</span>
+            <!-- 購物車彈出視窗 -->
+            <div class="cart-dropdown" id="cartDropdown">
+                <ul id="cart-items"></ul>
+                <p id="total-price">總價: $0</p>
+                <button onclick="checkout()">結帳</button>
+            </div>
+        </div>
+    </header>
+    <!-- 商品列表 -->
+    <div class="container" id="products-container">
+        <!-- 商品卡片 -->
+        <div class="product">
+            <img src="C:\Users\Acer\Desktop\專題\images\衣服.jpg" alt="產品1">
+            <h2>短版上衣</h2>
+            <p>涼快且舒適的上衣</p>
+            <p>價格: $299</p>
+            <button onclick="addToCart('短版上衣', 299)">加入購物車</button>
+        </div>
+        <div class="product">
+            <img src="C:\Users\Acer\Desktop\專題\images\長袖.jpg" alt="產品2">
+            <h2>長版上衣</h2>
+            <p>保暖上衣</p>
+            <p>價格: $499</p>
+            <button onclick="addToCart('長版上衣', 499)">加入購物車</button>
+        </div>
+        <div class="product">
+            <img src="C:\Users\Acer\Desktop\專題\images\外套.jpg" alt="產品3">
+            <h2>厚外套</h2>
+            <p>防暖且防風外套</p>
+            <p>價格: $1099</p>
+            <button onclick="addToCart('厚外套', 1099)">加入購物車</button>
+        </div>
+        <div class="product">
+            <img src="C:\Users\Acer\Desktop\專題\images\NO.jpg" alt="產品5">
+            <h2>短版上衣</h2>
+            <p>潮流上衣</p>
+            <p>價格: $899</p>
+            <button onclick="addToCart('厚外套', 1099)">加入購物車</button>
+        </div>
+        <div class="product">
+            <img src="C:\Users\Acer\Desktop\專題\images\shira.jpg" alt="產品4">
+            <h2>短版上衣</h2>
+            <p>潮流上衣</p>
+            <p>價格: $788</p>
+            <button onclick="addToCart('厚外套', 1099)">加入購物車</button>
+        </div>
+        <div class="product">
+            <img src="C:\Users\Acer\Desktop\專題\images\三小.jpg" alt="產品6">
+            <h2>短版上衣</h2>
+            <p>潮流上衣</p>
+            <p>價格: $988</p>
+            <button onclick="addToCart('厚外套', 1099)">加入購物車</button>
+        </div>
+      
+        
+    </div>
+    <!-- 分頁 -->
+    <div class="pagination" id="pagination">
+        <!-- 分頁數字 -->
+        <a href="javascript:void(0)" onclick="goToPage(1)">1</a>
+        <a href="javascript:void(0)" onclick="goToPage(2)">2</a>
+        <a href="javascript:void(0)" onclick="goToPage(3)">3</a>
+        <a href="javascript:void(0)" onclick="goToPage(4)">4</a>
+        <a href="javascript:void(0)" onclick="goToPage(5)">5</a>
+    </div>
+
+    <!-- 分類按鈕 -->
+    <div class="category-buttons">
+        <button onclick="filterCategory('上衣')">上衣</button>
+        <button onclick="filterCategory('褲子')">褲子</button>
+    </div>
+
+    <!-- JavaScript程式碼 -->
+    <script>
+        var cart = []; // 購物車內容
+
+        // 將商品加入購物車
+        function addToCart(productName, price) {
+            cart.push({ name: productName, price: price });
+            updateCart(); // 更新購物車內容
+            alert('已將商品加入購物車！');
+        }
+
+        // 切換購物車彈出視窗的顯示狀態
+        function toggleCart() {
+            var cartDropdown = document.getElementById('cartDropdown');
+            cartDropdown.style.display = cartDropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 更新購物車內容
+        function updateCart() {
+            var cartItemsElement = document.getElementById('cart-items'); // 購物車項目列表
+            var totalPriceElement = document.getElementById('total-price'); // 總價格
+            var cartItemCountElement = document.getElementById('cartItemCount'); // 購物車項目數量
+            var totalPrice = 0; // 總價格
+
+            // 清空先前的購物車項目
+            cartItemsElement.innerHTML = '';
+
+            // 填充購物車項目
+            cart.forEach(function(item) {
+                var li = document.createElement('li');
+                li.textContent = item.name + ' - $' + item.price;
+                cartItemsElement.appendChild(li);
+                totalPrice += item.price;
+            });
+
+            // 更新總價格
+            totalPriceElement.textContent = '總價: $' + totalPrice;
+
+            // 更新購物車項目數量
+            cartItemCountElement.textContent = cart.length;
+        }
+
+        // 結帳操作
+        function checkout() {
+            // 執行結帳操作（例如，將購物車數據發送到伺服器）
+            alert('感謝您的購買！您的訂單已提交。');
+            cart = []; // 清空購物車
+            updateCart(); // 更新購物車內容
+        }
+
+        // 分類功能
+function filterCategory(category) {
+    var products = document.querySelectorAll('.product');
+    products.forEach(function(product) {
+        var productName = product.querySelector('h2').textContent.toLowerCase();
+        if (category === '上衣' && productName.includes('上衣')) {
+            product.style.display = 'block';
+        } else if (category === '褲子' && productName.includes('褲子')) {
+            product.style.display = 'block';
+        } else {
+            product.style.display = 'none';
+        }
+    });
+}
+
+        // 搜尋功能
+        function search() {
+            var searchInput = document.getElementById('searchInput').value.toLowerCase();
+            var products = document.querySelectorAll('.product');
+
+            products.forEach(function(product) {
+                var productName = product.querySelector('h2').textContent.toLowerCase();
+                if (productName.includes(searchInput)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+        // 跳轉到指定頁面
+        function goToPage(page) {
+            var products = document.querySelectorAll('.product');
+            var startIndex = (page - 1) * 3;
+            var endIndex = startIndex + 3;
+
+            products.forEach(function(product, index) {
+                if (index >= startIndex && index < endIndex) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+        // 切換到下一頁
+function nextPage() {
+    var currentPage = getCurrentPage();
+    if (currentPage * 3 < document.querySelectorAll('.product').length) {
+        goToPage(currentPage + 1);
+    }
+}
+
+// 切換到上一頁
+function previousPage() {
+    var currentPage = getCurrentPage();
+    if (currentPage > 1) {
+        goToPage(currentPage - 1);
+    }
+}
+
+        // 獲取當前顯示的頁碼
+        function getCurrentPage() {
+    var products = document.querySelectorAll('.product');
+    var visibleProducts = Array.from(products).filter(function(product) {
+        return product.style.display !== 'none';
+    });
+    return Math.ceil(visibleProducts.length / 3);
+}
+    </script>
+    <head>
+        <!-- 其他標籤和內容 -->
+        <style>
+            .cart {
+                position: relative;
+                margin-left: auto;
+            }
+    
+            .cart-icon {
+                display: block;
+                width: 50px; /* 增加圖標的寬度 */
+                height: 50px; /* 增加圖標的高度 */
+                cursor: pointer;
+                background-color: #ff0000; /* 改變背景顏色 */
+                border-radius: 50%; /* 使圖標呈圓形 */
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加陰影效果 */
+            }
+    
+            .cart-item-count {
+                position: absolute;
+                top: 5px;
+                right: 0;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background-color: red;
+                color: white;
+                font-size: 18px;
+                text-align: center;
+                line-height: 30px;
+            }
+    
+            .cart-dropdown {
+                background-color: rgb(255, 255, 255);
+                color: rgb(0, 0, 0);
+                /* 其他樣式 */
+                
+            }
+
+            /* 左側分類按鈕 */
+.category-buttons {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.category-buttons button {
+    padding: 20px 40px; /* 調整按鈕大小 */
+    margin-bottom: 10px; /* 按鈕間距 */
+    font-size: 16px; /* 調整字體大小 */
+}
+        </style>
+
+    </head>
+    
+
+    
+</body>
+
+</html>
